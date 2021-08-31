@@ -11,7 +11,8 @@ const defaults = {
   assetsVersion: '',
   manifestPath: 'manifest.json',
   manifestOptions: {},
-  manifestCrossorigin: undefined
+  manifestCrossorigin: undefined,
+  manifestPublicPath: undefined
 }
 
 const defaultManifest = {
@@ -78,7 +79,8 @@ module.exports = class HtmlPwaPlugin {
           assetsVersion,
           manifestPath,
           iconPaths,
-          manifestCrossorigin
+          manifestCrossorigin,
+          manifestPublicPath
         } = this.options
         const { publicPath } = compiler.options.output
 
@@ -100,6 +102,7 @@ module.exports = class HtmlPwaPlugin {
             href: getTagHref(publicPath, iconPaths.favicon32, assetsVersionStr)
           }))
         }
+
         if (iconPaths.favicon16 != null) {
           data.headTags.push(makeTag('link', {
             rel: 'icon',
@@ -114,12 +117,12 @@ module.exports = class HtmlPwaPlugin {
           makeTag('link', manifestCrossorigin
             ? {
               rel: 'manifest',
-              href: getTagHref(publicPath, manifestPath, assetsVersionStr),
+              href: getTagHref(manifestPublicPath || publicPath, manifestPath, assetsVersionStr),
               crossorigin: manifestCrossorigin
             }
             : {
               rel: 'manifest',
-              href: getTagHref(publicPath, manifestPath, assetsVersionStr)
+              href: getTagHref(manifestPublicPath || publicPath, manifestPath, assetsVersionStr)
             }
           )
         )
